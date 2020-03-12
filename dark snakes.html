@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+	<script type="text/javascript">
+	var size = 15; //prompt("Enter playing field size");
+	var snSize = 3;	
+	var apple;
+	var snake = [];
+	var z;
+	var y;
+	var x;
+	var nextHeadPosition;
+	var direction;
+	var isGameStarted;	
+	var intervalId;
+
+	if (size == null) document.getElementById("body").innerHTML = "Please input size";
+	var tableDat = [];
+	for (var i = 0; i < size; i++) {
+		var row = []; 
+		for (var j= 0; j<size; j++) {
+			row[j] = i + '-' + j ;
+		}
+		tableDat[i] = row;
+	}
+
+	generateField();
+
+	function generateField(){
+		document.body.innerHTML = '';
+		createTable(tableDat);
+		snakeCreation();
+		generateApple();
+		isGameStarted = false;
+	}
+
+	function createTable(tableData) {
+		var table = document.createElement('table');
+		var tableBody = document.createElement('tbody');
+		table.setAttribute('id', 'tbl');
+		table.style.backgroundColor = 'white';
+		table.style.border = '1px solid black';
+		table.style.width = '200px';
+		table.style.height = '200px';
+		table.style.borderCollapse = 'collapse';
+
+		tableData.forEach(function(e) {
+			var row = document.createElement('tr');
+
+			e.forEach(function(cellData) {
+				var cell = document.createElement('td');
+
+				cell.setAttribute('id', cellData);
+				row.appendChild(cell);
+				cell.style.border = '1px solid black';
+				cell.style.margin = '0px';
+
+			});
+
+			tableBody.appendChild(row);
+		});
+
+		table.appendChild(tableBody);
+		document.body.appendChild(table);
+	}
+
+
+
+	function snakeCreation(){
+		snSize = 3;
+		snake = [getStartingPoint()];
+		console.log(snake);
+		for(i=0; i<snake.length; i++){
+			document.getElementById(snake[i]).style.backgroundColor = 'black';
+		}
+	}
+
+	function getStartingPoint(){
+		var avg1 = size/2;
+		var avg2 = (Math.round(avg1-1));
+		return avg2 + '-' + avg2;
+	}
+
+
+
+	
+
+	function generateApple(){
+		var num1 = Math.floor(Math.random() * size);
+		var num2 = Math.floor(Math.random() * size);
+
+		apple = num1 + '-' + num2;
+		
+		if(snake.includes(apple)){
+			return generateApple();
+		}
+		
+		document.getElementById(apple).style.cssText = 'background-color: black; border: 1px solid black; border-radius: 50%;';
+		console.log(apple);
+	}
+
+	function eat(){
+		snSize += 1;
+		document.getElementById(apple).style.borderRadius = '0';
+		generateApple();
+	}
+
+	function move(){
+		var head;
+		function nextHeadPositionTwo(){
+			z = nextHeadPosition.split('-');
+			y = z[0];
+			x = z[1];
+		}
+		if(direction == 'left'){
+			head = x-1 < 0 ? (x-1) + size : x-1;
+			nextHeadPosition = y + '-' + head;
+			nextHeadPositionTwo();
+		}
+		
+		if(direction == 'up'){
+			head = y-1 < 0 ? (y-1) + size : y-1;
+			nextHeadPosition = head + '-' + x;
+			nextHeadPositionTwo();
+		}
+		
+		if(direction == 'right'){
+			head = parseInt(x)+1 > size-1 ? (parseInt(x)+1) - size : parseInt(x)+1;
+			nextHeadPosition = y + '-' + head;
+			nextHeadPositionTwo();
+		}
+		
+		if(direction == 'down'){
+			head = parseInt(y)+1 > size-1 ? (parseInt(y)+1) - size : parseInt(y)+1;
+			nextHeadPosition = head + '-' + x;
+			nextHeadPositionTwo();
+		}
+
+		if(snake.includes(nextHeadPosition)){
+			alert('You died! Git gud');
+			clearInterval(intervalId);
+			generateField();
+			return;
+		}
+		snake.unshift(nextHeadPosition);
+		
+		if(snake[0] == apple){
+			eat();
+		}
+		if(snake.length > snSize){
+			document.getElementById(snake.pop()).style.backgroundColor = 'white';
+		}
+		for(i=0; i<snake.length; i++){
+			document.getElementById(snake[i]).style.backgroundColor = 'black';
+		}
+
+	}
+	
+	document.addEventListener('keydown', function moveSnake(e){
+
+		z = snake[0].split('-');
+		y = z[0];
+		x = z[1];
+		
+		
+		function gameStart(){
+			if(!isGameStarted){
+				isGameStarted = true;
+				intervalId = setInterval(move, 100);
+			}
+		}
+
+		if(e.which == 37){
+			direction = 'left';
+			gameStart();
+		}
+		
+		if(e.which == 38){
+			direction = 'up';
+			gameStart();
+		}
+		
+		if(e.which == 39){
+			direction = 'right';
+			gameStart();
+		}
+		
+		if(e.which == 40){
+			direction = 'down';
+			gameStart();		
+		}
+	});
+</script>
+</body>
+</html>
