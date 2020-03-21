@@ -4,6 +4,8 @@
 	<title></title>
 </head>
 <body>
+	<img src="img/died.jpg">
+		
 	<script type="text/javascript">
 	var size = 15; //prompt("Enter playing field size");
 	var snSize = 3;	
@@ -16,6 +18,8 @@
 	var direction;
 	var isGameStarted;	
 	var intervalId;
+	var diedImg = document.createElement('div');
+	var previousDirection;
 
 	if (size == null) document.getElementById("body").innerHTML = "Please input size";
 	var tableDat = [];
@@ -35,16 +39,17 @@
 		snakeCreation();
 		generateApple();
 		isGameStarted = false;
+		previousDirection = undefined;
 	}
 
 	function createTable(tableData) {
 		var table = document.createElement('table');
 		var tableBody = document.createElement('tbody');
 		table.setAttribute('id', 'tbl');
-		table.style.backgroundColor = 'white';
-		table.style.border = '1px solid black';
-		table.style.width = '200px';
-		table.style.height = '200px';
+		table.style.backgroundColor = 'lightGrey';
+		table.style.border = '2px solid black';
+		table.style.width = '900px';
+		table.style.height = '900px';
 		table.style.borderCollapse = 'collapse';
 
 		tableData.forEach(function(e) {
@@ -55,7 +60,7 @@
 
 				cell.setAttribute('id', cellData);
 				row.appendChild(cell);
-				cell.style.border = '1px solid black';
+				cell.style.border = '2px solid black';
 				cell.style.margin = '0px';
 
 			});
@@ -119,25 +124,30 @@
 			head = x-1 < 0 ? (x-1) + size : x-1;
 			nextHeadPosition = y + '-' + head;
 			nextHeadPositionTwo();
+			previousDirection = 'left';
 		}
 		
 		if(direction == 'up'){
 			head = y-1 < 0 ? (y-1) + size : y-1;
 			nextHeadPosition = head + '-' + x;
 			nextHeadPositionTwo();
+			previousDirection = 'up';
 		}
-		
+			
 		if(direction == 'right'){
 			head = parseInt(x)+1 > size-1 ? (parseInt(x)+1) - size : parseInt(x)+1;
 			nextHeadPosition = y + '-' + head;
 			nextHeadPositionTwo();
+			previousDirection = 'right';
 		}
 		
 		if(direction == 'down'){
 			head = parseInt(y)+1 > size-1 ? (parseInt(y)+1) - size : parseInt(y)+1;
 			nextHeadPosition = head + '-' + x;
 			nextHeadPositionTwo();
+			previousDirection = 'down';
 		}
+		
 
 		if(snake.includes(nextHeadPosition)){
 			alert('You died! Git gud');
@@ -145,13 +155,14 @@
 			generateField();
 			return;
 		}
+
 		snake.unshift(nextHeadPosition);
 		
 		if(snake[0] == apple){
 			eat();
 		}
 		if(snake.length > snSize){
-			document.getElementById(snake.pop()).style.backgroundColor = 'white';
+			document.getElementById(snake.pop()).style.backgroundColor = 'lightGrey';
 		}
 		for(i=0; i<snake.length; i++){
 			document.getElementById(snake[i]).style.backgroundColor = 'black';
@@ -173,22 +184,22 @@
 			}
 		}
 
-		if(e.which == 37){
+		if(e.which == 37 && previousDirection != 'right'){
 			direction = 'left';
 			gameStart();
 		}
 		
-		if(e.which == 38){
+		if(e.which == 38 && previousDirection != 'down'){
 			direction = 'up';
 			gameStart();
 		}
 		
-		if(e.which == 39){
+		if(e.which == 39 && previousDirection != 'left'){
 			direction = 'right';
 			gameStart();
 		}
 		
-		if(e.which == 40){
+		if(e.which == 40 && previousDirection != 'up'){
 			direction = 'down';
 			gameStart();		
 		}
