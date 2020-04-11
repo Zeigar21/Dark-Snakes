@@ -4,16 +4,16 @@
 	<title></title>
 </head>
 <body>
-	<!-- <img src="img/died.jpg"> -->
+	<img id="diedScreen" src="img/died.jpg" style="display: none; width: 100%; height: 100%;">
 
 	<button onclick="soundButton()" type="button" style="background-image: url(img/speaker.png); background-color: transparent; background-repeat: no-repeat; background-position: 0px 0px; height: 30px; padding-left: 24px; vertical-align: middle;"></button>
 	
 
-	<audio id="backgroundAudio" autoplay="false" muted="true" volume="0.2">
+	<audio id="backgroundAudio" autoplay="false" muted="true" volume="0.1">
 		<source src="mp3/boss.mp3">
 	</audio>
 	
-	<audio id="collisionAudio" autoplay="false" muted="true" volume="0.2">
+	<audio id="collisionAudio" autoplay="false" muted="true" volume="0.1">
 		<source src="mp3/death.mp3">
 	</audio>
 
@@ -31,6 +31,7 @@
 	var intervalId;
 	var diedImg = document.createElement('div');
 	var previousDirection;
+	var diedScreen = document.getElementById('diedScreen');
 	var backgroundAudio = document.getElementById('backgroundAudio');
 	backgroundAudio.volume = 0.3;
 	var collisionAudio = document.getElementById('collisionAudio');
@@ -53,6 +54,7 @@
 	function generateField(){
 		collisionAudio.pause();
 		collisionAudio.currentTime = 0;
+		diedScreen.style.display = 'none';
 		backgroundAudio.play();
 		var tbl = document.getElementById('tbl');
 		if(tbl != null){
@@ -177,7 +179,9 @@
 			backgroundAudio.pause();
 			backgroundAudio.currentTime = 0;
 			collisionAudio.play();
-			alert('You died! Git gud');
+			tbl.style.display = 'none';
+			diedScreen.style.display = 'block';
+			alert('Git gud!');
 			clearInterval(intervalId);
 			generateField();
 			return;
