@@ -4,8 +4,19 @@
 	<title></title>
 </head>
 <body>
-	<img src="img/died.jpg">
-		
+	<!-- <img src="img/died.jpg"> -->
+
+	<button onclick="soundButton()" type="button" style="background-image: url(img/speaker.png); background-color: transparent; background-repeat: no-repeat; background-position: 0px 0px; height: 30px; padding-left: 24px; vertical-align: middle;"></button>
+	
+
+	<audio id="backgroundAudio" autoplay="false" muted="true" volume="0.2">
+		<source src="mp3/boss.mp3">
+	</audio>
+	
+	<audio id="collisionAudio" autoplay="false" muted="true" volume="0.2">
+		<source src="mp3/death.mp3">
+	</audio>
+
 	<script type="text/javascript">
 	var size = 15; //prompt("Enter playing field size");
 	var snSize = 3;	
@@ -20,6 +31,12 @@
 	var intervalId;
 	var diedImg = document.createElement('div');
 	var previousDirection;
+	var backgroundAudio = document.getElementById('backgroundAudio');
+	backgroundAudio.volume = 0.3;
+	var collisionAudio = document.getElementById('collisionAudio');
+	collisionAudio.volume = 0.3;
+	var soundSettings;
+
 
 	if (size == null) document.getElementById("body").innerHTML = "Please input size";
 	var tableDat = [];
@@ -34,12 +51,19 @@
 	generateField();
 
 	function generateField(){
-		document.body.innerHTML = '';
+		collisionAudio.pause();
+		collisionAudio.currentTime = 0;
+		backgroundAudio.play();
+		var tbl = document.getElementById('tbl');
+		if(tbl != null){
+			tbl.remove();
+		}
 		createTable(tableDat);
 		snakeCreation();
 		generateApple();
 		isGameStarted = false;
 		previousDirection = undefined;
+		// backgroundAudio.play();
 	}
 
 	function createTable(tableData) {
@@ -150,6 +174,9 @@
 		
 
 		if(snake.includes(nextHeadPosition)){
+			backgroundAudio.pause();
+			backgroundAudio.currentTime = 0;
+			collisionAudio.play();
 			alert('You died! Git gud');
 			clearInterval(intervalId);
 			generateField();
@@ -204,6 +231,19 @@
 			gameStart();		
 		}
 	});
+
+	function soundButton(){
+		if(backgroundAudio.muted == true && collisionAudio.muted == true){
+			backgroundAudio.muted = false;
+			collisionAudio.muted = false;
+			console.log(backgroundAudio.muted);
+		}
+		else{
+			backgroundAudio.muted = true;
+			collisionAudio.muted = true;
+			console.log(backgroundAudio.muted);
+		}
+	}
 </script>
 </body>
 </html>
